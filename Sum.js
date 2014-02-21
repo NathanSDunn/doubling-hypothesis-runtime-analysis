@@ -20,6 +20,30 @@ var sum_reduce = function(array) {
     });
 };
 
+//from https://class.coursera.org/algs4partI-004/lecture/11
+threeSum = function(a) {
+        var N = a.length;
+        var cnt = 0;
+        for (var i = 0; i < N; i++) {
+            for (var j = i+1; j < N; j++) {
+                for (var k = j+1; k < N; k++) {
+                    if (a[i] + a[j] + a[k] == 0) {
+                        cnt++;
+                    }
+                }
+            }
+        }
+        return cnt;
+    } 
+
+threeSum_analyse = function(){    
+    var db=DoublingHypothesisBounds;//pointer to the function
+    
+    //test the duplicate finding algorithms
+    console.log('\nthreesum O(n^3)');
+    db(threeSum, rndNumArray);
+}
+
 Sum_test = function() {
     var sizeOfRandomArray = 20;
 

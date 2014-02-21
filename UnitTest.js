@@ -70,7 +70,7 @@ function runtimeIterations(fn, input, iterations) {
 function runtime(fn, input, iterations) {
     var i,start,end,ms=0,rt;    
     if (iterations === undefined){
-        iterations = 10000;
+        iterations = 10;
     }
     while (ms<10) {
         start = new Date().getTime();
@@ -79,7 +79,7 @@ function runtime(fn, input, iterations) {
         }
         end = new Date().getTime();
         ms=(end-start);
-        iterations*=5;//not enough time elapsed, try more iterations
+        iterations*=10;//not enough time elapsed, try more iterations
         //console.log('ms'+ms);
     }
     rt=ms/iterations;
@@ -91,51 +91,76 @@ function runtime(fn, input, iterations) {
 //see http://jsperf.com/log-base-2/2 
 log2lookupTable= [0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9];
 log2lookup=function (a) {
-  return log2lookupTable[(a & -a) * 0x077CB531 >>> 27]
+  return log2lookupTable[(a & -a) * 0x077CB531 >>> 27];
 };
 
 //compute with Math.log
 mathLog2Val=Math.log(2);
-lg=function(a){return Math.log(a) /mathLog2Val;}
+lg=function(a){return Math.log(a) /mathLog2Val;};
+analyse=DoublingHypothesisBounds;//pointer to the function
 //attempts to find the order N^X big O of a function using the Doubling Hypothesis 
 //inside a set of bounds and prints the results of the test to console
-function DoublingHypothesisBounds(fn,inputFn,maxN,minN){
-    var N,input,time,R,runtimes=[],a,b;
+function DoublingHypothesisBounds(fn,inputFn,maxN,maxSamples){
+    var N,input,time,R,runtimes={},a,b,og,minN,eqn,callback;//og=order of growth
     
     if (maxN===undefined){
         maxN=4000;
     }
         
-    if (minN===undefined){
-        minN=maxN/4;//default to 3 runs
+    if (maxSamples===undefined){
+        minN=maxN/Math.pow(2,2);//default to 3 runs
+    } else {
+        minN=maxN/Math.pow(2,(maxSamples-1));        
     }
     
     N=minN;
     maxN++;
     
-    //run the first operation
-    input=inputFn(N);
-    time=runtime(fn,input);
-    runtimes[N]=[];
-    runtimes[N]['time']=time;
-    
-    N*=2;
     //compute the runtime of the function, doubling N each iteration
-    for (;N<=maxN;N*=2){        
-        input=inputFn(N);
-        time=runtime(fn,input);
-        runtimes[N]=[];
-        runtimes[N]['time']=time;
-        
-        //work out ratio
-        R=time/runtimes[N/2].time;
-        b=lg(R);
-        a=time/Math.pow(N,b);;
-        runtimes[N]['R']=R;
-        runtimes[N]['lg(R)']=b;
-        runtimes[N]['a']=a;
-        console.log('Eqn:'+a+'N^'+b);
+    for (;N<=maxN;N*=2){ 
+        if (N>=1){
+            input=inputFn(N);
+            time=runtime(fn,input);
+            runtimes[N]={};
+            runtimes[N]['time']=time;
+            
+            if (runtimes[N/2]!==undefined){
+                //work out ratio
+                R=time/runtimes[N/2].time;
+                //review https://class.coursera.org/algs4partI-004/lecture/14 to work out R values for different types of algorithms
+                //rough estimates, compare experimentally
+                //these seems inccorect, exponent should be equal to b but the lecture slides are different
+                if (R<2.5){
+                    if (R<1.2){
+                        og='constant O(1)';
+                    } else if (R<1.8) {
+                        og='logarithmic O(log(N))';                
+                    } else {
+                        og='linear O(N)';
+                    }            
+                } else {
+                    //>=2.5
+                    if (R<3){
+                        og='quadratic(N^2)';   
+                    } else if (R<10) {
+                        og='cubic(N^3)';                
+                    } else {
+                        og='exponential(2^N)';
+                    }                     
+                }
+                runtimes[N]['R']=R;
+
+                b=lg(R);
+                runtimes[N]['lg(R)']=b;
+                a=time/Math.pow(N,Math.round(b));
+                runtimes[N]['a']=a;
+                eqn=a+'N^'+Math.round(b)+'   b:'+b;
+                console.log(eqn);
+            }
+        }
     }
-    window.rr=runtimes;
-    console.log('Tests:',runtimes);    
+    console.log('Tests:',runtimes,og); 
+    //workout how to translate this into a proper cached function
+    callback="function(N){return "+a+"* Math.pow(N,Math.round("+b+"));};";
+    return callback;
 }
