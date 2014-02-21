@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <head>
+    <head>   
+        <script type="text/javascript" src="lib\BST.js"></script> 
+        
+        <script type="text/javascript" src="Sum.js"></script>   
+        <script type="text/javascript" src="Dupes.js"></script>   
+        <script type="text/javascript" src="StringFn.js"></script>
+        <script type="text/javascript" src="BST.js"></script>     
+        <script type="text/javascript" src="UnitTest.js"></script>        
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Runtime testing of Sum and Duplicate Finding algorithms</title>
-        <script type="text/javascript" src="UnitTestSumDupes.js"></script>   
+        <title>Runtime tests</title>        
     </head>
     <body>
-        <h1>Runtime testing of Sum and Duplicate Finding algorithms</h1>
-        <p>Please remember to turn on Google Chrome and watch your console.log (F12) or Firefox+Firebug console window before refreshing the page!</p>
+        <h1>Please choose a runtime test:</h1>
+        <ul>
+            <li><a href="#" onClick="javascript:Sum_test();">Sum algorithms</a></li>
+            <li><a href="#" onClick="javascript:Dupes_test();">Duplicate Finding algorithms</a> [<a href="#" onClick="javascript:Dupes_analyse();">Analyse</a>]</li>
+            <li><a href="#" onClick="javascript:StringFn_test();">String operations</a></li>
+            <li><a href="#" onClick="javascript:BST_test();">Test BST library</a>* Copyright (c) 2011 Trevor Lalish-Menagh (<a href="http://www.trevmex.com/">http://www.trevmex.com/</a>)</li>
+        </ul>
+        <p>Note: Please remember to turn on Google Chrome and watch your console.log (F12) or Firefox+Firebug console window before refreshing the page!</p>
     </body>
 </html>
