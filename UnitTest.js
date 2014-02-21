@@ -50,7 +50,7 @@ function errt(fn, testCondition, expected, iterations) {
 }
 
 //returns runtime
-function runtime(fn, input, iterations) {
+function runtimeIterations(fn, input, iterations) {
     var i;    
     if (iterations === undefined){
         iterations = 10000;
@@ -65,31 +65,77 @@ function runtime(fn, input, iterations) {
     console.log(start+'-'+end+'='+(end-start)+'...'+(end-start)+'/'+iterations+'='+ms);
     return ms;
 }
+//returns runtime with a min time elapsed of 10ms (runtime was giving low values
+//for some very fast functions, wanted to overcome this.)
+function runtime(fn, input, iterations) {
+    var i,start,end,ms=0,rt;    
+    if (iterations === undefined){
+        iterations = 10000;
+    }
+    while (ms<10) {
+        start = new Date().getTime();
+        for (i = 1; i < iterations; i++) {
+            fn(input);
+        }
+        end = new Date().getTime();
+        ms=(end-start);
+        iterations*=5;//not enough time elapsed, try more iterations
+        //console.log('ms'+ms);
+    }
+    rt=ms/iterations;
+    //console.log(start+'-'+end+'='+ms+'ms so ms/i='+ms+'/'+iterations+'='+rt);
+    return rt;
+}
+
+//use lookup table to compute log base 2
+//see http://jsperf.com/log-base-2/2 
+log2lookupTable= [0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9];
+log2lookup=function (a) {
+  return log2lookupTable[(a & -a) * 0x077CB531 >>> 27]
+};
+
+//compute with Math.log
+mathLog2Val=Math.log(2);
+lg=function(a){return Math.log(a) /mathLog2Val;}
 //attempts to find the order N^X big O of a function using the Doubling Hypothesis 
 //inside a set of bounds and prints the results of the test to console
-function DoublingHypothesisBounds(fn,inputFn,minN,maxN){
-    var N,input,time,R,runtimes={};
-    if (minN===undefined){
-        minN=250;
-    }
+function DoublingHypothesisBounds(fn,inputFn,maxN,minN){
+    var N,input,time,R,runtimes=[],a,b;
+    
     if (maxN===undefined){
-        maxN=8001;
+        maxN=4000;
     }
+        
+    if (minN===undefined){
+        minN=maxN/4;//default to 3 runs
+    }
+    
+    N=minN;
     maxN++;
     
     //run the first operation
     input=inputFn(N);
     time=runtime(fn,input);
+    runtimes[N]=[];
     runtimes[N]['time']=time;
+    
     N*=2;
     //compute the runtime of the function, doubling N each iteration
     for (;N<=maxN;N*=2){        
         input=inputFn(N);
-        time=runtimes(fn,input);
-        runtimes[N]=time;
-        R=time/runtimes[N/2];
+        time=runtime(fn,input);
+        runtimes[N]=[];
+        runtimes[N]['time']=time;
+        
+        //work out ratio
+        R=time/runtimes[N/2].time;
+        b=lg(R);
+        a=time/Math.pow(N,b);;
         runtimes[N]['R']=R;
-        runtimes[N]['lgR']=Math.log2(R);
+        runtimes[N]['lg(R)']=b;
+        runtimes[N]['a']=a;
+        console.log('Eqn:'+a+'N^'+b);
     }
+    window.rr=runtimes;
     console.log('Tests:',runtimes);    
 }

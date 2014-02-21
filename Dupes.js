@@ -221,12 +221,14 @@ Dupes_analyse = function() {
     console.log('\n\n\n\n\n\nAnalysis of Duplicates Algorithms (sorts and compares output arrays)');
 
     //test runtime function
+    console.log('\nruntime test of duplicates O(20^2)');
     console.log(runtime(duplicates, rndNumArray(20)));
-//test the duplicate finding algorithms
+    
+    //test the duplicate finding algorithms
     console.log('\nduplicates O(n^2)');
     db(duplicates, rndNumArray);
 
-//test the duplicate finding algorithms
+    //test the duplicate finding algorithms
     console.log('\nduplicates_opt O(n)');
     db(duplicates_opt, rndNumArray);
 
@@ -243,7 +245,7 @@ Dupes_analyse = function() {
     db(duplicates_optmmci, rndNumArray);
 
     console.log('\n\nsort - time to copy and sort the array');
-    db(sort, testInput, rndNumArray);
+    db(sort, rndNumArray);
 
     console.log('\n\nsort_duplicates_sorted O(n) + time to copy and sort the array');
     db(sort_duplicates_sorted, rndNumArray);
