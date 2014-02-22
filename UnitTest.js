@@ -30,6 +30,43 @@ function zeroNumArray(elements) {
     return ret;
 }
 
+function rndCharArray(elements) {
+    var i, ret = [],chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < elements; i++ ) {
+        ret.push(chars.charAt(Math.floor(Math.random() * chars.length)));
+    }
+    return ret;
+}
+function incCharArray(elements) {
+    var i, ret = [],chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (i = 0; i < elements; i++) {
+        ret.push(chars.charAt(i));
+    }
+    return ret;
+}
+
+
+function rndString(length) {
+    var i, ret = "",chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ ){
+        ret += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return ret;
+}
+function rptString(length) {
+    var i, ret = "",chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ ){
+        ret += chars.charAt(i % chars.length);
+    }
+    return ret;
+}
+
+//rnd BST
+//incnum array, rnd index unshift, insert into tree
+
 //tests a function against a specific condition and profiles runtime
 function errt(fn, testCondition, expected, iterations) {
     var i, res,date;
@@ -101,24 +138,11 @@ function runtime(fn, input, iterations) {
     return rt;
 }
 
-//use lookup table to compute log base 2
-//see http://jsperf.com/log-base-2/2 
-log2lookupTable= [0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9];
-log2lookup=function (a) {
-  return log2lookupTable[(a & -a) * 0x077CB531 >>> 27];
-};
-
-//compute with Math.log
-mathLog2Val=Math.log(2);
-lg=function(a){return Math.log(a) /mathLog2Val;};
-analyse=DoublingHypothesisBounds;//pointer to the function
 //attempts to find the order N^X big O of a function using the Doubling Hypothesis 
 //inside a set of bounds and prints the results of the test to console
 function DoublingHypothesisBounds(fn,inputFn,maxN,maxSamples){
     var N,input,time,R,runtimes={},a,b,og,minN,eqn,callback;//og=order of growth
-    if (inputFn===undefined){
-        inputFn=rndNumArray;
-    }
+    //Work out the values of N to be tested
     if (maxN===undefined){
         maxN=16000;
     }
@@ -135,7 +159,11 @@ function DoublingHypothesisBounds(fn,inputFn,maxN,maxSamples){
     //compute the runtime of the function, doubling N each iteration
     for (;N<=maxN;N*=2){ 
         if (N>=1){
-            input=inputFn(N);
+            if (inputFn===undefined){
+                input=N;//if no input generating function is supplied, use N
+            } else {
+                input=inputFn(N);
+            }
             time=runtime(fn,input);
             runtimes[N]={};
             runtimes[N]['time']=time;
@@ -180,3 +208,15 @@ function DoublingHypothesisBounds(fn,inputFn,maxN,maxSamples){
     callback="function(N){return "+a+"* Math.pow(N,Math.round("+b+"));};";
     return callback;
 }
+analyse=DoublingHypothesisBounds;//pointer to the function
+
+//use lookup table to compute log base 2
+//see http://jsperf.com/log-base-2/2 
+lgLookupTable= [0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9];
+lgLookup=function (a) {
+  return lgLookupTable[(a & -a) * 0x077CB531 >>> 27];
+};
+
+//compute with Math.log
+mathLog2Val=Math.log(2);
+lg=function(a){return Math.log(a) /mathLog2Val;};
