@@ -30,7 +30,7 @@ function zeroNumArray(elements) {
     return ret;
 }
 
-function rndCharArray(elements) {
+function rndAlphCharArray(elements) {
     var i, ret = [],chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for( var i=0; i < elements; i++ ) {
@@ -38,8 +38,24 @@ function rndCharArray(elements) {
     }
     return ret;
 }
-function incCharArray(elements) {
+rndCharArray=rndAlphCharArray;
+function incAlphCharArray(elements) {
     var i, ret = [],chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (i = 0; i < elements; i++) {
+        ret.push(chars.charAt(i));
+    }
+    return ret;
+}
+function rndAlphNumCharArray(elements) {
+    var i, ret = [],chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < elements; i++ ) {
+        ret.push(chars.charAt(Math.floor(Math.random() * chars.length)));
+    }
+    return ret;
+}
+function incAlphNumCharArray(elements) {
+    var i, ret = [],chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (i = 0; i < elements; i++) {
         ret.push(chars.charAt(i));
     }
@@ -47,7 +63,7 @@ function incCharArray(elements) {
 }
 
 
-function rndString(length) {
+function rndAlphString(length) {
     var i, ret = "",chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for( var i=0; i < length; i++ ){
@@ -55,7 +71,7 @@ function rndString(length) {
     }
     return ret;
 }
-function rptString(length) {
+function rptAlphString(length) {
     var i, ret = "",chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for( var i=0; i < length; i++ ){
@@ -63,6 +79,24 @@ function rptString(length) {
     }
     return ret;
 }
+
+function rndAlphNumString(length) {
+    var i, ret = "",chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ ){
+        ret += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return ret;
+}
+function rptAlphNumString(length) {
+    var i, ret = "",chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ ){
+        ret += chars.charAt(i % chars.length);
+    }
+    return ret;
+}
+rndString=rndAlphNumString;
 
 //rnd BST
 //incnum array, rnd index unshift, insert into tree
