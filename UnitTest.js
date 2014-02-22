@@ -15,6 +15,20 @@ function rndNumArray(elements) {
     }
     return ret;
 }
+function incNumArray(elements) {
+    var i, ret = [];
+    for (i = 0; i < elements; i++) {
+        ret.push(i);
+    }
+    return ret;
+}
+function zeroNumArray(elements) {
+    var i, ret = [];
+    for (i = 0; i < elements; i++) {
+        ret.push(0);
+    }
+    return ret;
+}
 
 //tests a function against a specific condition and profiles runtime
 function errt(fn, testCondition, expected, iterations) {
@@ -102,9 +116,11 @@ analyse=DoublingHypothesisBounds;//pointer to the function
 //inside a set of bounds and prints the results of the test to console
 function DoublingHypothesisBounds(fn,inputFn,maxN,maxSamples){
     var N,input,time,R,runtimes={},a,b,og,minN,eqn,callback;//og=order of growth
-    
+    if (inputFn===undefined){
+        inputFn=rndNumArray;
+    }
     if (maxN===undefined){
-        maxN=4000;
+        maxN=16000;
     }
         
     if (maxSamples===undefined){
